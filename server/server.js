@@ -8,6 +8,9 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.get("/", (req, res) => {
+  console.log("Server is running");
+  });
 
 app.use(cors());
 app.use(express.json());
