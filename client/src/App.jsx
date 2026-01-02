@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const App = () => {
@@ -20,7 +22,6 @@ const App = () => {
     const { name, value } = e.target;
     setValues({ ...values, [name]: value });
 
-    // live email validation
     if (name === "email") {
       if (!emailRegex.test(value)) {
         setEmailError("Please enter a valid email address");
@@ -32,7 +33,7 @@ const App = () => {
 
   const fetchContacts = async () => {
     try {
-      const res = await axios.get("VITE_API_URL/api/contacts");
+      const res = await axios.get(`${API_URL}/api/contacts`);
       setContacts(res.data.contacts);
     } catch (error) {
       console.error(error);
@@ -43,14 +44,13 @@ const App = () => {
   const submit = async () => {
     if (!emailRegex.test(values.email)) {
       setEmailError("Please enter a valid email address");
-      alert("❌ Invalid email");
       return;
     }
 
     try {
-      await axios.post("VITE_API_URL/api/contacts", values);
+      await axios.post(`${API_URL}/api/contacts`, values);
 
-      alert("✅ Contact saved successfully!");
+      alert("✅ Contact saved successfully");
 
       setValues({
         firstName: "",
@@ -70,7 +70,7 @@ const App = () => {
 
   const deleteContact = async (id) => {
     try {
-      await axios.delete(`http://localhost:1000/api/contacts/${id}`);
+      await axios.delete(`${API_URL}/api/contacts/${id}`);
       alert("🗑️ Contact deleted");
       fetchContacts();
     } catch (error) {
@@ -91,119 +91,67 @@ const App = () => {
 
   return (
     <div className="page">
-      <section className="hero-section">
-        <div className="contact-wrapper">
-          <div className="contact-info">
-            <h2>Contact Management</h2>
-            <p>Have a question or business inquiry? Reach out to us.</p>
-            <p>Provide accurate contact details so we can respond quickly.</p>
+      <h1>Contact Form</h1>
+
+      <input
+        name="firstName"
+        placeholder="First Name"
+        value={values.firstName}
+        onChange={change}
+      />
+
+      <input
+        name="lastName"
+        placeholder="Last Name"
+        value={values.lastName}
+        onChange={change}
+      />
+
+      <input
+        name="email"
+        placeholder="Email"
+        value={values.email}
+        onChange={change}
+      />
+      {emailError && <p style={{ color: "red" }}>{emailError}</p>}
+
+      <input
+        name="phone"
+        placeholder="Phone"
+        value={values.phone}
+        onChange={change}
+      />
+
+      <textarea
+        name="message"
+        placeholder="Message (optional)"
+        value={values.message}
+        onChange={change}
+      />
+
+      <button onClick={submit} disabled={isInvalid}>
+        Submit
+      </button>
+
+      <hr />
+
+      <h2>Saved Contacts</h2>
+
+      {contacts.length === 0 ? (
+        <p>No contacts</p>
+      ) : (
+        contacts.map((c) => (
+          <div key={c._id} style={{ border: "1px solid #ccc", margin: 10 }}>
+            <p>
+              <strong>{c.firstName} {c.lastName}</strong>
+            </p>
+            <p>{c.email}</p>
+            <p>{c.phone}</p>
+            {c.message && <p>{c.message}</p>}
+            <button onClick={() => deleteContact(c._id)}>Delete</button>
           </div>
-
-          <div className="contact-form">
-            <h1>Contact Form</h1>
-
-            <div className="row">
-              <div className="form-group">
-                <label>First Name*</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={values.firstName}
-                  onChange={change}
-                  placeholder="Enter first name"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Last Name*</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={values.lastName}
-                  onChange={change}
-                  placeholder="Enter last name"
-                />
-              </div>
-            </div>
-
-            <div className="row">
-              <div className="form-group">
-                <label>Email*</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={values.email}
-                  onChange={change}
-                  className={emailError ? "input-error" : ""}
-                  placeholder="example@gmail.com"
-                />
-                {emailError && (
-                  <p className="error-text">{emailError}</p>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label>Phone No.*</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={values.phone}
-                  onChange={change}
-                  placeholder="9XXXXXXXXX"
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Message</label>
-              <textarea
-                name="message"
-                value={values.message}
-                onChange={change}
-                placeholder="Optional message..."
-              />
-            </div>
-
-            <button onClick={submit} disabled={isInvalid}>
-              Submit
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section className="contacts-section">
-        <div className="saved-contacts">
-          <h2>Saved Contacts</h2>
-
-          {contacts.length === 0 ? (
-            <p className="empty">No contacts found</p>
-          ) : (
-            <div className="contact-cards">
-              {contacts.map((c) => (
-                <div className="contact-card" key={c._id}>
-                  <div>
-                    <h3>
-                      {c.firstName} {c.lastName}
-                    </h3>
-                    <p><strong>Email:</strong> {c.email}</p>
-                    <p><strong>Phone:</strong> {c.phone}</p>
-                    {c.message && (
-                      <p><strong>Message:</strong> {c.message}</p>
-                    )}
-                  </div>
-
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteContact(c._id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+        ))
+      )}
     </div>
   );
 };
