@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -36,21 +37,21 @@ const App = () => {
       setContacts(res.data.contacts);
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to fetch contacts");
+      alert(" Failed to fetch contacts");
     }
   };
 
   const submit = async () => {
     if (!emailRegex.test(values.email)) {
       setEmailError("Please enter a valid email address");
-      alert("❌ Invalid email");
+      alert(" Invalid email");
       return;
     }
 
     try {
       await axios.post(`${API_URL}/api/contacts`, values);
 
-      alert("✅ Contact saved successfully!");
+      alert(" Contact saved successfully!");
 
       setValues({
         firstName: "",
@@ -64,18 +65,18 @@ const App = () => {
       fetchContacts();
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to save contact");
+      alert(" Failed to save contact");
     }
   };
 
   const deleteContact = async (id) => {
     try {
-      await axios.delete(`http://localhost:1000/api/contacts/${id}`);
-      alert("🗑️ Contact deleted");
+      await axios.delete(`${API_URL}/api/contacts/${id}`);
+      alert(" Contact deleted");
       fetchContacts();
     } catch (error) {
       console.error(error);
-      alert("❌ Failed to delete contact");
+      alert(" Failed to delete contact");
     }
   };
 
