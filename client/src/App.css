@@ -173,8 +173,8 @@ button:disabled {
   background: #b91c1c;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
+
+@media (max-width: 768xpx) {
   .contact-wrapper {
     flex-direction: column;
   }
