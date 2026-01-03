@@ -148,6 +148,8 @@ const App = () => {
                 <input
                   type="tel"
                   name="phone"
+                  pattern="[0-9]{10}"
+                  title="Phone number must be 10 digits"
                   value={values.phone}
                   onChange={change}
                   placeholder="9XXXXXXXXX"
