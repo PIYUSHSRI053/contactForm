@@ -31,16 +31,17 @@ const App = () => {
         setEmailError("");
       }
     }
+    // live phone validation
+    if (name === "phone") {
+      if (!/^\d{10}$/.test(value)) {
+        setPhoneError("Phone number must be 10 digits");
+      } else {
+        setPhoneError("");
+      }
+    }
   };
 
-  // live phone validation
-  if (name === "phone") {
-    if (!/^\d{10}$/.test(value)) {
-      setPhoneError("Phone number must be 10 digits");
-    } else {
-      setPhoneError("");
-    }
-  }
+
 
 
   const fetchContacts = async () => {
@@ -77,7 +78,7 @@ const App = () => {
         phone: "",
         message: "",
       });
-
+      setPhoneError("");
       setEmailError("");
       fetchContacts();
     } catch (error) {
@@ -105,7 +106,8 @@ const App = () => {
     !values.firstName ||
     !values.lastName ||
     !values.phone ||
-    !emailRegex.test(values.email);
+    !emailRegex.test(values.email) ||
+    phoneError;
 
   return (
     <div className="page">
