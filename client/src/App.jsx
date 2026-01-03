@@ -16,6 +16,8 @@ const App = () => {
 
   const [emailError, setEmailError] = useState("");
   const [contacts, setContacts] = useState([]);
+  const [phoneError, setPhoneError] = useState("");
+
 
   const change = (e) => {
     const { name, value } = e.target;
@@ -30,6 +32,16 @@ const App = () => {
       }
     }
   };
+
+  // live phone validation
+  if (name === "phone") {
+    if (!/^\d{10}$/.test(value)) {
+      setPhoneError("Phone number must be 10 digits");
+    } else {
+      setPhoneError("");
+    }
+  }
+
 
   const fetchContacts = async () => {
     try {
@@ -47,6 +59,11 @@ const App = () => {
       alert(" Invalid email");
       return;
     }
+    if (phoneError) {
+      alert("Invalid phone number");
+      return;
+    }
+
 
     try {
       await axios.post(`${API_URL}/api/contacts`, values);
@@ -148,12 +165,13 @@ const App = () => {
                 <input
                   type="tel"
                   name="phone"
-                  pattern="[0-9]{10}"
-                  title="Phone number must be 10 digits"
                   value={values.phone}
                   onChange={change}
+                  className={phoneError ? "input-error" : ""}
                   placeholder="9XXXXXXXXX"
                 />
+                {phoneError && <p className="error-text">{phoneError}</p>}
+
               </div>
             </div>
 
