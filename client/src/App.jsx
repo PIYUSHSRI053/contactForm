@@ -146,7 +146,7 @@ const App = () => {
               <div className="form-group">
                 <label>Phone No.*</label>
                 <input
-                  type="text"
+                  type="tel"
                   name="phone"
                   value={values.phone}
                   onChange={change}
